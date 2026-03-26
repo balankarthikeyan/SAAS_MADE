@@ -58,6 +58,8 @@ export function KeycloakProvider({ children }: KeycloakProviderProps) {
             console.error('Could not read Keycloak error body', e)
           }
         }
+        // Still set initialized so the app doesn't hang in a perpetual loading state
+        setAuth({ keycloak, initialized: true })
       })
   }, [])
 

@@ -11,13 +11,23 @@ import {
   FormControlLabel,
   Divider,
   Stack,
-  Grid,
+  Avatar,
+  Card,
+  CardContent,
+  CardActions,
 } from '@mui/material'
+import PersonIcon from '@mui/icons-material/Person'
 import { useForm } from 'react-hook-form'
 
 export default function SettingsPage() {
   const keycloak = useKeycloak() as {
-    tokenParsed?: { preferred_username: string }
+    tokenParsed?: { 
+      preferred_username?: string
+      email?: string
+      name?: string
+      given_name?: string
+      family_name?: string
+    }
     logout?: () => void
   }
 
@@ -41,6 +51,41 @@ export default function SettingsPage() {
         Settings
       </Typography>
 
+      {/* Account Information Section */}
+      <Typography variant="h5" sx={{ mb: 3 }}>
+        Account Information
+      </Typography>
+      <Card sx={{ maxWidth: 600, mb: 5, p: 1 }}>
+        <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+          <Avatar sx={{ width: 80, height: 80, bgcolor: 'primary.main' }}>
+            <PersonIcon sx={{ fontSize: 40 }} />
+          </Avatar>
+          <Box>
+            <Typography variant="h5" fontWeight="bold">
+              {keycloak?.tokenParsed?.name || 'Authorized User'}
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+              Username: {keycloak?.tokenParsed?.preferred_username || 'N/A'}
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+              Email: {keycloak?.tokenParsed?.email || 'No email associated'}
+            </Typography>
+          </Box>
+        </CardContent>
+        <CardActions sx={{ px: 2, pb: 2 }}>
+          <Button 
+            variant="outlined" 
+            color="error"
+            onClick={() => keycloak?.logout?.()}
+          >
+            Sign Out of Keycloak
+          </Button>
+        </CardActions>
+      </Card>
+
+      <Typography variant="h5" sx={{ mb: 3 }}>
+        System Preferences
+      </Typography>
       <Paper sx={{ p: 4, maxWidth: 600 }}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Stack spacing={3}>
@@ -76,10 +121,6 @@ export default function SettingsPage() {
             </Box>
           </Stack>
         </form>
-        <Grid>
-          <p>Logged in as: {username}</p>
-          <button onClick={() => keycloak?.logout?.()}>Logout</button>
-        </Grid>
       </Paper>
     </DashboardLayout>
   )

@@ -15,8 +15,10 @@ import {
   ListItemText,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
+import PersonIcon from "@mui/icons-material/Person";
+import LogoutIcon from "@mui/icons-material/Logout";
 import { NAV_ITEMS } from "@/constants/navigation";
-// import { UserButton } from "@clerk/nextjs";
+import { useKeycloak } from "@/components/KeycloakProvider";
 import Link from "next/link";
 
 const drawerWidth = 240;
@@ -27,6 +29,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const keycloak = useKeycloak();
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -71,9 +74,25 @@ export default function DashboardLayout({
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
+          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
             Dashboard
           </Typography>
+
+          {keycloak?.authenticated && (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Box sx={{ display: { xs: 'none', sm: 'block' }, textAlign: 'right' }}>
+                <Typography variant="subtitle2" sx={{ lineHeight: 1.2 }}>
+                  {keycloak.tokenParsed?.name || keycloak.tokenParsed?.preferred_username || 'User'}
+                </Typography>
+                <Typography variant="caption" sx={{ opacity: 0.8 }}>
+                  {keycloak.tokenParsed?.email || ''}
+                </Typography>
+              </Box>
+              <IconButton color="inherit" onClick={() => keycloak.logout()}>
+                <LogoutIcon />
+              </IconButton>
+            </Box>
+          )}
         </Toolbar>
       </AppBar>
 
