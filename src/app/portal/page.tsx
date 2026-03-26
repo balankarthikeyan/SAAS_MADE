@@ -10,7 +10,7 @@ export default function Login() {
       </Typography>
 
       <Grid container spacing={3}>
-        <Grid item xs={12} md={4}>
+        <Grid size={{ xs: 12, md: 4 }}>
           <Paper sx={{ p: 3 }}>
             <Typography variant="h6">Total Revenue</Typography>
             <Typography variant="h4">$12,450</Typography>

@@ -1,5 +1,6 @@
-"use client";
-import DashboardLayout from "@/components/DashboardLayout";
+'use client'
+import DashboardLayout from '@/components/DashboardLayout'
+import { useKeycloak } from '@/components/KeycloakProvider'
 import {
   Typography,
   Paper,
@@ -10,23 +11,30 @@ import {
   FormControlLabel,
   Divider,
   Stack,
-} from "@mui/material";
-import { useForm } from "react-hook-form";
+  Grid,
+} from '@mui/material'
+import { useForm } from 'react-hook-form'
 
 export default function SettingsPage() {
+  const keycloak = useKeycloak() as {
+    tokenParsed?: { preferred_username: string }
+    logout?: () => void
+  }
+
   const { register, handleSubmit } = useForm({
     defaultValues: {
-      appName: "My SaaS Product",
+      appName: 'My SaaS Product',
       emailNotifications: true,
-      supportEmail: "admin@mysaas.com",
+      supportEmail: 'admin@mysaas.com',
     },
-  });
+  })
 
-  const onSubmit = (data: any) => {
-    console.log("Saving Settings:", data);
-    alert("Settings Saved! (Check console)");
-  };
+  const onSubmit = (data: unknown) => {
+    console.log('Saving Settings:', data)
+    alert('Settings Saved! (Check console)')
+  }
 
+  const username = keycloak?.tokenParsed?.preferred_username as string
   return (
     <DashboardLayout>
       <Typography variant="h4" sx={{ mb: 4 }}>
@@ -39,13 +47,13 @@ export default function SettingsPage() {
             <Typography variant="h6">General Configuration</Typography>
 
             <TextField
-              {...register("appName")}
+              {...register('appName')}
               label="Application Name"
               fullWidth
             />
 
             <TextField
-              {...register("supportEmail")}
+              {...register('supportEmail')}
               label="Support Contact Email"
               fullWidth
             />
@@ -56,7 +64,7 @@ export default function SettingsPage() {
 
             <FormControlLabel
               control={
-                <Switch defaultChecked {...register("emailNotifications")} />
+                <Switch defaultChecked {...register('emailNotifications')} />
               }
               label="Enable Email Notifications"
             />
@@ -68,7 +76,11 @@ export default function SettingsPage() {
             </Box>
           </Stack>
         </form>
+        <Grid>
+          <p>Logged in as: {username}</p>
+          <button onClick={() => keycloak?.logout?.()}>Logout</button>
+        </Grid>
       </Paper>
     </DashboardLayout>
-  );
+  )
 }
